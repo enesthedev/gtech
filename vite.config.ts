@@ -13,8 +13,12 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                bunny('Saira', {
+                    weights: [400, 600, 800],
+                    styles: ['normal', 'italic'],
+                }),
+                bunny('Martian Mono', {
+                    weights: [400, 600],
                 }),
             ],
         }),
@@ -65,6 +69,7 @@ export default defineConfig({
         htmlWhitespaceSensitivity: 'css',
         ignorePatterns: [
             '.github/**',
+            '.impeccable/**',
             'composer.json',
             'resources/js/components/ui/*',
             'resources/views/mail/*',

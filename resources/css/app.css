@@ -9,9 +9,20 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'Saira', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono:
+        'Martian Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        monospace;
+
+    --color-asphalt: #0f0e0d;
+    --color-asphalt-raised: #1a1917;
+    --color-line: #2b2926;
+    --color-chalk: #f2efe9;
+    --color-smoke: #9b968d;
+    --color-gtech-red: #de2125;
+    --color-signal: #ff5456;
+    --color-ink: #161514;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
