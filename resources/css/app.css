@@ -151,4 +151,9 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    /* Homepage focus rings, including the portaled mobile menu. */
+    .home :focus-visible {
+        @apply outline-chalk outline-2 outline-offset-2;
+    }
 }
