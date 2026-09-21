@@ -169,7 +169,7 @@ HAS_DB_USER_OVERRIDE=0
 HAS_DB_PASSWORD_OVERRIDE=0
 HAS_DB_HOST_OVERRIDE=0
 HAS_DB_PORT_OVERRIDE=0
-SEEDER_CLASS="StagingDatabaseSeeder"
+SEEDER_CLASS="DatabaseSeeder"
 SHOULD_CREATE_DB=1
 SHOULD_INSTALL=1
 SHOULD_BUILD=1
@@ -255,8 +255,8 @@ else
 fi
 APP_URL="${APP_URL_OVERRIDE:-https://${WORKTREE_DIR_NAME}.test}"
 APP_HOST=$(extract_host "$APP_URL")
-DB_NAME="${DB_NAME_OVERRIDE:-egelloc_${FEATURE_SNAKE}}"
-CACHE_PREFIX="egelloc_${FEATURE_SNAKE}_"
+DB_NAME="${DB_NAME_OVERRIDE:-gtech_${FEATURE_SNAKE}}"
+CACHE_PREFIX="gtech_${FEATURE_SNAKE}_"
 SOURCE_ENV="${PROJECT_ROOT}/.env"
 SOURCE_ENV_IS_EXAMPLE=0
 BASE_REF="$BASE_BRANCH"
@@ -442,6 +442,5 @@ Worktree ready!
   URL:       ${APP_URL}
   Database:  ${DB_NAME}
 
-Test login: coach1@staging.egelloc.com / password
 Clean up later: bin/cleanup-worktree.sh ${WORKTREE_DIR_NAME}
 EOF
