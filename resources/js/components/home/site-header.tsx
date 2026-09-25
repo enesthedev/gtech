@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Menu } from 'lucide-react';
+import { ArrowRight, Menu } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import {
     Sheet,
@@ -8,7 +8,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import { toUrl } from '@/lib/utils';
+import { cn, toUrl } from '@/lib/utils';
 import { home, login } from '@/routes';
 import type { NavItem } from '@/types';
 
@@ -16,8 +16,8 @@ type Props = {
     nav: NavItem[];
 };
 
-const bookClass =
-    'inline-flex min-h-11 -skew-x-12 items-center bg-gtech-red px-4 text-sm font-semibold text-white uppercase transition-colors hover:bg-gtech-red/85 lg:px-5';
+// Drag-tree staging: each lamp lights this long after the hover starts.
+const LAMPS = [200, 290, 380];
 
 export function SiteHeader({ nav }: Props) {
     const headerRef = useRef<HTMLElement>(null);
@@ -84,16 +84,7 @@ export function SiteHeader({ nav }: Props) {
                 </nav>
 
                 <div className="ml-auto flex items-center gap-2 lg:gap-6">
-                    <Link
-                        href={login()}
-                        className="text-smoke hover:text-chalk hidden min-h-11 items-center text-sm font-semibold transition-colors lg:inline-flex"
-                    >
-                        Tuner login
-                    </Link>
-
-                    <a href="#contact" className={bookClass}>
-                        <span className="skew-x-12">Book your car</span>
-                    </a>
+                    <LoginButton />
 
                     <Sheet>
                         <SheetTrigger asChild>
@@ -124,22 +115,7 @@ export function SiteHeader({ nav }: Props) {
                                     </SheetClose>
                                 ))}
                             </nav>
-                            <Link
-                                href={login()}
-                                className="text-smoke inline-flex min-h-11 items-center font-semibold"
-                            >
-                                Tuner login
-                            </Link>
-                            <SheetClose asChild>
-                                <a
-                                    href="#contact"
-                                    className={`${bookClass} self-start`}
-                                >
-                                    <span className="skew-x-12">
-                                        Book your car
-                                    </span>
-                                </a>
-                            </SheetClose>
+                            <LoginButton className="w-full justify-center" />
                         </SheetContent>
                     </Sheet>
                 </div>
@@ -154,5 +130,44 @@ export function SiteHeader({ nav }: Props) {
                 <div className="bg-gtech-red h-full" />
             </div>
         </header>
+    );
+}
+
+// Into the tuning dashboard. On hover or focus a chalk lane sweeps in behind
+// the label, then the staging lamps light red in turn, like a drag tree.
+// Reduced motion: no transitions, the lit state simply appears.
+function LoginButton({ className }: { className?: string }) {
+    return (
+        <Link
+            href={login()}
+            className={cn(
+                'group/login bg-gtech-red relative inline-flex h-11 -skew-x-12 items-center overflow-hidden px-4 text-sm font-extrabold tracking-wide uppercase italic lg:px-5',
+                className,
+            )}
+        >
+            <span
+                aria-hidden="true"
+                className="bg-chalk absolute inset-0 origin-left scale-x-0 transition-transform duration-300 ease-out group-hover/login:scale-x-100 group-focus-visible/login:scale-x-100 motion-reduce:transition-none"
+            />
+            <span className="group-hover/login:text-ink group-focus-visible/login:text-ink relative flex skew-x-12 items-center gap-2 text-white">
+                <span aria-hidden="true" className="flex gap-1">
+                    {LAMPS.map((delay) => (
+                        <span
+                            key={delay}
+                            className="group-hover/login:bg-gtech-red group-focus-visible/login:bg-gtech-red size-1 bg-white/40 transition-colors motion-reduce:transition-none"
+                            style={{ transitionDelay: `${delay}ms` }}
+                        />
+                    ))}
+                </span>
+                <span className="whitespace-nowrap">
+                    Let&rsquo;s tune
+                    <span className="sr-only"> (log in)</span>
+                </span>
+                <ArrowRight
+                    aria-hidden="true"
+                    className="hidden size-3.5 transition-transform group-hover/login:translate-x-1 group-focus-visible/login:translate-x-1 motion-reduce:transition-none lg:block"
+                />
+            </span>
+        </Link>
     );
 }
