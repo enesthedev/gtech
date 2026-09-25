@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ArrowRight, Menu } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
     Sheet,
     SheetClose,
@@ -19,8 +19,24 @@ type Props = {
 // Drag-tree staging: each lamp lights this long after the hover starts.
 const LAMPS = [200, 290, 380];
 
+// Nav items and the CTA share one type and height.
+const ITEM = 'h-11 text-sm font-extrabold tracking-wide uppercase italic';
+
 export function SiteHeader({ nav }: Props) {
     const headerRef = useRef<HTMLElement>(null);
+    const [hovered, setHovered] = useState<string | null>(null);
+    const links = useRef<Record<string, HTMLAnchorElement | null>>({});
+    const [tab, setTab] = useState<{ left: number; width: number } | null>(
+        null,
+    );
+    useLayoutEffect(() => {
+        // Keeps its last spot when nothing is hovered, so it fades out in place.
+        const link = hovered ? links.current[hovered] : null;
+
+        if (link) {
+            setTab({ left: link.offsetLeft, width: link.offsetWidth });
+        }
+    }, [hovered]);
 
     // The red lane under the header fills with page scroll (--p, 0 → 1).
     useEffect(() => {
@@ -71,19 +87,47 @@ export function SiteHeader({ nav }: Props) {
                     />
                 </Link>
 
-                <nav aria-label="Main" className="hidden gap-6 lg:flex">
-                    {nav.map((item) => (
-                        <a
-                            key={item.title}
-                            href={toUrl(item.href)}
-                            className="text-smoke hover:text-chalk inline-flex min-h-11 items-center text-sm font-semibold transition-colors"
-                        >
-                            {item.title}
-                        </a>
-                    ))}
-                </nav>
+                <div className="ml-auto flex items-center gap-2 lg:gap-8">
+                    <nav
+                        aria-label="Main"
+                        className="relative hidden lg:flex"
+                        onMouseLeave={() => setHovered(null)}
+                    >
+                        {/* One tab, shaped like the button, slides under the hovered item. */}
+                        <span
+                            aria-hidden="true"
+                            className={cn(
+                                'bg-asphalt-raised absolute inset-y-0 -skew-x-12 transition-[left,width,opacity] duration-300 ease-out motion-reduce:transition-none',
+                                !hovered && 'opacity-0',
+                            )}
+                            style={tab ?? undefined}
+                        />
+                        {nav.map((item) => {
+                            const href = toUrl(item.href);
 
-                <div className="ml-auto flex items-center gap-2 lg:gap-6">
+                            return (
+                                <a
+                                    key={item.title}
+                                    ref={(el) => {
+                                        links.current[href] = el;
+                                    }}
+                                    href={href}
+                                    onMouseEnter={() => setHovered(href)}
+                                    onFocus={() => setHovered(href)}
+                                    onBlur={() => setHovered(null)}
+                                    className={cn(
+                                        ITEM,
+                                        'hover:text-chalk relative inline-flex items-center px-4 whitespace-nowrap transition-colors',
+                                        hovered === href
+                                            ? 'text-chalk'
+                                            : 'text-smoke',
+                                    )}
+                                >
+                                    {item.title}
+                                </a>
+                            );
+                        })}
+                    </nav>
                     <LoginButton />
 
                     <Sheet>
@@ -100,20 +144,25 @@ export function SiteHeader({ nav }: Props) {
                         <SheetContent
                             side="right"
                             aria-describedby={undefined}
-                            className="dark border-line bg-asphalt text-chalk gap-8 px-6 pt-16 [&>button:last-child]:top-2.5 [&>button:last-child]:right-2.5 [&>button:last-child]:grid [&>button:last-child]:size-11 [&>button:last-child]:place-items-center"
+                            className="dark border-line bg-asphalt text-chalk gap-10 px-6 pt-16 [&>button:last-child]:top-2.5 [&>button:last-child]:right-2.5 [&>button:last-child]:grid [&>button:last-child]:size-11 [&>button:last-child]:place-items-center"
                         >
                             <SheetTitle className="sr-only">Menu</SheetTitle>
                             <nav aria-label="Main" className="flex flex-col">
-                                {nav.map((item) => (
-                                    <SheetClose asChild key={item.title}>
-                                        <a
-                                            href={toUrl(item.href)}
-                                            className="border-line flex min-h-12 items-center border-b text-lg font-semibold"
-                                        >
-                                            {item.title}
-                                        </a>
-                                    </SheetClose>
-                                ))}
+                                {nav.map((item) => {
+                                    const href = toUrl(item.href);
+                                    return (
+                                        <SheetClose asChild key={item.title}>
+                                            <a
+                                                href={href}
+                                                className="border-line flex min-h-14 items-center gap-4 border-b"
+                                            >
+                                                <span className="text-xl font-extrabold uppercase italic">
+                                                    {item.title}
+                                                </span>
+                                            </a>
+                                        </SheetClose>
+                                    );
+                                })}
                             </nav>
                             <LoginButton className="w-full justify-center" />
                         </SheetContent>
@@ -141,7 +190,8 @@ function LoginButton({ className }: { className?: string }) {
         <Link
             href={login()}
             className={cn(
-                'group/login bg-gtech-red relative inline-flex h-11 -skew-x-12 items-center overflow-hidden px-4 text-sm font-extrabold tracking-wide uppercase italic lg:px-5',
+                ITEM,
+                'group/login bg-gtech-red relative inline-flex -skew-x-12 items-center overflow-hidden px-4 lg:px-5',
                 className,
             )}
         >
