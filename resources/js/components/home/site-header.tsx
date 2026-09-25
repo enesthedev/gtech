@@ -186,12 +186,12 @@ export function SiteHeader({ nav }: Props) {
     );
 }
 
-// Open/Closed at a glance, the file-service sites' pattern. Hidden until the
-// client knows the time, so SSR never guesses.
+// Shown only while support is open, the file-service sites' pattern. Hidden on
+// the server too, so SSR never guesses the time.
 function SupportPill() {
     const status = useSupportStatus();
 
-    if (!status) {
+    if (!status?.open) {
         return null;
     }
 
@@ -201,15 +201,12 @@ function SupportPill() {
             className="border-line text-chalk hover:border-chalk inline-flex h-8 -skew-x-12 items-center border px-3 font-mono text-xs uppercase transition-colors"
         >
             <span className="flex skew-x-12 items-center gap-2">
-                <span
-                    aria-hidden="true"
-                    className={cn(
-                        'size-1.5',
-                        status.open ? 'bg-green-400' : 'bg-smoke',
-                    )}
-                />
-                {status.open ? 'Open' : 'Closed'}
-                <span className="sr-only"> — support, see hours</span>
+                <span aria-hidden="true" className="size-1.5 bg-green-400" />
+                Open
+                <span className="sr-only">
+                    {' '}
+                    — support is online, start a chat
+                </span>
             </span>
         </a>
     );
