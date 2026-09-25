@@ -113,7 +113,7 @@ export function HeroTimeslip({ runs }: Props) {
     return (
         <section
             aria-labelledby="hero-title"
-            className="border-line relative isolate overflow-hidden border-b"
+            className="relative isolate overflow-hidden"
         >
             {/* Phones: the car above the text. Wide screens: the car behind it, on the right. */}
             <div
