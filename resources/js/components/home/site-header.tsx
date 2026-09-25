@@ -55,6 +55,8 @@ export function SiteHeader({ nav }: Props) {
                 '--p',
                 String(room > 0 ? Math.min(1, scrollY / room) : 0),
             );
+            // Once the page moves, the header turns to frosted glass.
+            header.toggleAttribute('data-scrolled', scrollY > 0);
         };
         const onScroll = () => {
             frame ||= requestAnimationFrame(update);
@@ -74,7 +76,7 @@ export function SiteHeader({ nav }: Props) {
     return (
         <header
             ref={headerRef}
-            className="border-line bg-asphalt sticky top-0 z-40 border-b"
+            className="border-line bg-asphalt sticky top-0 z-40 border-b transition-colors duration-300 data-scrolled:bg-black/5 data-scrolled:backdrop-blur-md"
         >
             <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 lg:h-20 lg:gap-10 lg:px-8">
                 <Link href={home()} className="shrink-0">
