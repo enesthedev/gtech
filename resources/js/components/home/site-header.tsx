@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import {
     Sheet,
     SheetClose,
@@ -19,8 +20,46 @@ const bookClass =
     'inline-flex min-h-11 -skew-x-12 items-center bg-gtech-red px-4 text-sm font-semibold text-white uppercase transition-colors hover:bg-gtech-red/85 lg:px-5';
 
 export function SiteHeader({ nav }: Props) {
+    const headerRef = useRef<HTMLElement>(null);
+
+    // The red lane under the header fills with page scroll (--p, 0 → 1).
+    useEffect(() => {
+        const header = headerRef.current;
+
+        if (!header) {
+            return;
+        }
+
+        let frame = 0;
+        const update = () => {
+            frame = 0;
+            const room =
+                document.documentElement.scrollHeight - window.innerHeight;
+            header.style.setProperty(
+                '--p',
+                String(room > 0 ? Math.min(1, scrollY / room) : 0),
+            );
+        };
+        const onScroll = () => {
+            frame ||= requestAnimationFrame(update);
+        };
+
+        update();
+        addEventListener('scroll', onScroll, { passive: true });
+        addEventListener('resize', onScroll);
+
+        return () => {
+            removeEventListener('scroll', onScroll);
+            removeEventListener('resize', onScroll);
+            cancelAnimationFrame(frame);
+        };
+    }, []);
+
     return (
-        <header className="border-line border-b">
+        <header
+            ref={headerRef}
+            className="border-line bg-asphalt sticky top-0 z-40 border-b"
+        >
             <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 lg:h-20 lg:gap-10 lg:px-8">
                 <Link href={home()} className="shrink-0">
                     <img
@@ -104,6 +143,15 @@ export function SiteHeader({ nav }: Props) {
                         </SheetContent>
                     </Sheet>
                 </div>
+            </div>
+
+            {/* Scroll progress, the lane over the hairline. Hidden with reduced motion. */}
+            <div
+                aria-hidden="true"
+                className="absolute inset-x-0 -bottom-px h-0.5 origin-left motion-reduce:hidden"
+                style={{ transform: 'scaleX(var(--p, 0))' }}
+            >
+                <div className="bg-gtech-red h-full" />
             </div>
         </header>
     );
