@@ -218,7 +218,7 @@ function Timeslip({
     const { stock, tuned } = metric;
     const longest = Math.max(stock, tuned);
     const lanes = [
-        { label: 'Stock', time: stock, text: 'text-smoke', bar: 'bg-smoke/50' },
+        { label: 'Stock', time: stock, text: 'text-smoke', bar: 'bg-smoke' },
         {
             label: 'GTECH',
             time: tuned,
