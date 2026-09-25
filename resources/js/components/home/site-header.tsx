@@ -76,7 +76,7 @@ export function SiteHeader({ nav }: Props) {
     return (
         <header
             ref={headerRef}
-            className="border-line bg-asphalt sticky top-0 z-40 border-b transition-colors duration-300 data-scrolled:bg-black/5 data-scrolled:backdrop-blur-md"
+            className="border-line bg-asphalt sticky top-0 z-40 border-b transition-colors duration-300 data-scrolled:bg-black/60 data-scrolled:backdrop-blur-md"
         >
             <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 lg:h-20 lg:gap-10 lg:px-8">
                 <Link href={home()} className="shrink-0">
@@ -99,7 +99,7 @@ export function SiteHeader({ nav }: Props) {
                         <span
                             aria-hidden="true"
                             className={cn(
-                                'bg-asphalt-raised absolute inset-y-0 -skew-x-12 transition-[left,width,opacity] duration-300 ease-out motion-reduce:transition-none',
+                                'absolute inset-y-0 -skew-x-12 bg-white/5 transition-[left,width,opacity] duration-300 ease-out motion-reduce:transition-none',
                                 !hovered && 'opacity-0',
                             )}
                             style={tab ?? undefined}
