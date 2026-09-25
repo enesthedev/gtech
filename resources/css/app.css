@@ -166,3 +166,83 @@
         @apply outline-chalk outline-2 outline-offset-2;
     }
 }
+
+/*
+ * Scroll entrances for the homepage sections, tied to each element's own
+ * place in the viewport (so they rewind on the way back up). Without
+ * scroll-driven animation support or with reduced motion, everything simply
+ * shows in its final state. Only `opacity`, `translate` and `scale` move, so
+ * the skew utilities on badges and the rule keep working.
+ */
+@layer components {
+    @keyframes reveal {
+        from {
+            opacity: 0;
+            translate: var(--reveal-x, 0) var(--reveal-y, 2rem);
+        }
+    }
+
+    /* The logo's forward slant, straightening as it lands. */
+    @keyframes reveal-slant {
+        from {
+            opacity: 0;
+            translate: -4rem 0;
+            transform: skewX(-12deg);
+        }
+    }
+
+    @keyframes draw {
+        from {
+            scale: var(--draw-from);
+        }
+    }
+
+    @keyframes slide-in {
+        from {
+            opacity: 0.25;
+        }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        @supports (animation-timeline: view()) {
+            /* `--i` staggers siblings that enter the viewport together. */
+            .reveal {
+                animation: reveal linear both;
+                animation-timeline: view();
+                animation-range: entry calc(var(--i, 0) * 10%) cover
+                    calc(30% + var(--i, 0) * 10%);
+            }
+
+            .reveal-slant {
+                animation: reveal-slant linear both;
+                animation-timeline: view();
+                animation-range: entry 0% cover 35%;
+            }
+
+            /* Across while the paths stack, down once the rule stands up. */
+            .draw {
+                --draw-from: 0 1;
+                transform-origin: left;
+                animation: draw linear both;
+                animation-timeline: view();
+                animation-range: cover 10% cover 50%;
+
+                @media (width >= 64rem) {
+                    --draw-from: 1 0;
+                    transform-origin: top;
+                }
+            }
+
+            /*
+             * Slider cards: dim while they peek in from the right, full once
+             * they have slid in. The contents fade, not the card, so the
+             * hairlines behind it never show through.
+             */
+            .slide-in > * {
+                animation: slide-in linear both;
+                animation-timeline: view(inline);
+                animation-range: entry 0% entry 100%;
+            }
+        }
+    }
+}
