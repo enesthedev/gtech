@@ -152,6 +152,15 @@
         @apply bg-background text-foreground;
     }
 
+    /* Anchor jumps land below the sticky header (h-16, lg:h-20). */
+    .home {
+        scroll-padding-top: 4rem;
+
+        @variant lg {
+            scroll-padding-top: 5rem;
+        }
+    }
+
     /* Homepage focus rings, including the portaled mobile menu. */
     .home :focus-visible {
         @apply outline-chalk outline-2 outline-offset-2;

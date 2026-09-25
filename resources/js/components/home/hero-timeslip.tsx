@@ -113,7 +113,7 @@ export function HeroTimeslip({ runs }: Props) {
     return (
         <section
             aria-labelledby="hero-title"
-            className="border-line relative isolate overflow-hidden border-b"
+            className="relative isolate overflow-hidden"
         >
             {/* Phones: the car above the text. Wide screens: the car behind it, on the right. */}
             <div
@@ -218,7 +218,7 @@ function Timeslip({
     const { stock, tuned } = metric;
     const longest = Math.max(stock, tuned);
     const lanes = [
-        { label: 'Stock', time: stock, text: 'text-smoke', bar: 'bg-smoke/50' },
+        { label: 'Stock', time: stock, text: 'text-smoke', bar: 'bg-smoke' },
         {
             label: 'GTECH',
             time: tuned,
@@ -226,10 +226,6 @@ function Timeslip({
             bar: 'bg-gtech-red',
         },
     ];
-    const trap =
-        run.tuned_trap_speed !== null
-            ? `trap ${run.tuned_trap_speed} km/h`
-            : null;
 
     return (
         <div role="group" aria-label="Dragy run" className={className}>
@@ -305,26 +301,35 @@ function Timeslip({
             </div>
 
             <div className="text-smoke mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 font-mono text-xs uppercase">
-                <div className="space-y-1">
+                {/* Side stats as a spec strip: label above, value below. */}
+                <dl className="flex gap-6">
                     {metric.label === '100–200 km/h' &&
-                    run.stock_quarter_mile !== null &&
-                    run.tuned_quarter_mile !== null ? (
-                        <p>
-                            1/4 mile {formatTime(run.stock_quarter_mile)}{' '}
-                            <ArrowRight
-                                aria-hidden="true"
-                                className="inline size-3"
-                            />
-                            <span className="sr-only">to</span>{' '}
-                            {formatTime(run.tuned_quarter_mile)} s
-                            {trap && ` · ${trap}`}
-                        </p>
-                    ) : (
-                        trap && <p>{trap}</p>
+                        run.stock_quarter_mile !== null &&
+                        run.tuned_quarter_mile !== null && (
+                            <div className="border-line border-l-2 pl-3">
+                                <dt>1/4 mile</dt>
+                                <dd className="text-chalk mt-1 text-sm normal-case tabular-nums">
+                                    <span className="text-smoke">
+                                        {formatTime(run.stock_quarter_mile)}
+                                    </span>{' '}
+                                    <ArrowRight
+                                        aria-hidden="true"
+                                        className="text-gtech-red inline size-3.5"
+                                    />
+                                    <span className="sr-only">to</span>{' '}
+                                    {formatTime(run.tuned_quarter_mile)} s
+                                </dd>
+                            </div>
+                        )}
+                    {run.tuned_trap_speed !== null && (
+                        <div className="border-line border-l-2 pl-3">
+                            <dt>Trap</dt>
+                            <dd className="text-chalk mt-1 text-sm normal-case tabular-nums">
+                                {run.tuned_trap_speed} km/h
+                            </dd>
+                        </div>
                     )}
-                    {/* Goes with the fixture in 2.3. */}
-                    <p>Sample data — not real runs</p>
-                </div>
+                </dl>
                 {run.proof_url && (
                     <a
                         href={run.proof_url}
