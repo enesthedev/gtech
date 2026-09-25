@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
@@ -33,7 +33,14 @@ const fieldClass =
     'border-line bg-asphalt text-chalk placeholder:text-smoke focus-visible:border-chalk focus-visible:ring-chalk/30 aria-invalid:border-signal rounded-none';
 
 export function ContactSection() {
-    const status = useSupportStatus();
+    const real = useSupportStatus();
+    const preview = usePreview();
+    const status =
+        preview === 'open'
+            ? { open: true, next: null }
+            : preview
+              ? { open: false, next: { day: 'Mon', time: '09:00' } }
+              : real;
 
     return (
         <section
@@ -95,12 +102,36 @@ export function ContactSection() {
                     {status?.open ? (
                         <ChatEntry />
                     ) : (
-                        <OfflineForm status={status} />
+                        <OfflineForm
+                            status={status}
+                            errors={preview === 'errors' ? SAMPLE_ERRORS : {}}
+                            submitting={preview === 'submitting'}
+                            sent={preview === 'success'}
+                        />
                     )}
                 </div>
             </div>
         </section>
     );
+}
+
+// DEV ONLY — remove before merge. `?contact=open|closed|errors|submitting|success`.
+const SAMPLE_ERRORS: Errors = {
+    name: 'Enter your name.',
+    email: 'Enter a valid email address.',
+    message: 'Write a message.',
+};
+
+function usePreview(): string | null {
+    const [preview, setPreview] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (import.meta.env.DEV) {
+            setPreview(new URLSearchParams(location.search).get('contact'));
+        }
+    }, []);
+
+    return preview;
 }
 
 function StatusLine({ status }: { status: SupportStatus | null }) {
