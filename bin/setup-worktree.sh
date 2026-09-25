@@ -334,9 +334,13 @@ if [[ "$SOURCE_ENV_IS_EXAMPLE" -eq 1 ]]; then
     set_env_value "${WORKTREE_PATH}/.env" "FILESYSTEM_DISK" "local"
 fi
 
-info "Rewriting APP_URL / DB_DATABASE / SESSION_DOMAIN / CACHE_PREFIX"
+info "Rewriting APP_URL / DB_CONNECTION / DB_DATABASE / SESSION_DOMAIN / CACHE_PREFIX"
 set_env_value "${WORKTREE_PATH}/.env" "APP_URL" "$APP_URL"
 set_env_value "${WORKTREE_PATH}/.env" "APP_SERVICE" "$APP_HOST"
+# The isolated database this script creates is a MySQL one, so pin the driver.
+# Without it a copied .env that leaves DB_CONNECTION unset falls back to the
+# sqlite default, and migrations open DB_DATABASE as a file path instead.
+set_env_value "${WORKTREE_PATH}/.env" "DB_CONNECTION" "mysql"
 set_env_value "${WORKTREE_PATH}/.env" "DB_DATABASE" "$DB_NAME"
 set_env_value "${WORKTREE_PATH}/.env" "SESSION_DOMAIN" "$APP_HOST"
 set_env_value "${WORKTREE_PATH}/.env" "CACHE_PREFIX" "$CACHE_PREFIX"
