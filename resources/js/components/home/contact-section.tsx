@@ -4,7 +4,6 @@ import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { cn } from '@/lib/utils';
 import {
     DAYS,
@@ -17,13 +16,7 @@ import type { SupportStatus } from '@/lib/support-hours';
 // Monday first, the way the week reads.
 const WEEK = [1, 2, 3, 4, 5, 6, 0];
 
-const TOPICS = [
-    { value: 'workshop', label: 'Workshop' }, // DRAFT
-    { value: 'file-service', label: 'File service' }, // DRAFT
-    { value: 'other', label: 'Other' }, // DRAFT
-];
-
-type Field = 'name' | 'email' | 'vehicle' | 'message';
+type Field = 'name' | 'email' | 'message';
 type Errors = Partial<Record<Field, string>>;
 
 const ctaClass =
@@ -119,7 +112,6 @@ export function ContactSection() {
 const SAMPLE_ERRORS: Errors = {
     name: 'Enter your name.',
     email: 'Enter a valid email address.',
-    message: 'Write a message.',
 };
 
 function usePreview(): string | null {
@@ -193,13 +185,11 @@ function OfflineForm({
     submitting = false,
     sent = false,
 }: FormProps) {
-    const [topic, setTopic] = useState(TOPICS[0].value);
-
     if (sent) {
         return (
             <div role="status" className="flex flex-col gap-4">
                 <p className="text-2xl font-extrabold uppercase italic">
-                    Message received {/* DRAFT */}
+                    Thanks — we&rsquo;ve got it {/* DRAFT */}
                 </p>
                 <p className="text-smoke">
                     {/* DRAFT */}
@@ -223,11 +213,11 @@ function OfflineForm({
         >
             <div className="flex flex-col gap-2">
                 <p className="text-2xl font-extrabold uppercase italic">
-                    Leave a message {/* DRAFT */}
+                    Leave your details {/* DRAFT */}
                 </p>
                 <p className="text-smoke">
                     {/* DRAFT */}
-                    We answer at the next opening.
+                    We&rsquo;ll get back to you at the next opening.
                 </p>
             </div>
 
@@ -245,47 +235,17 @@ function OfflineForm({
                 )}
             </TextField>
 
-            <div className="flex flex-col gap-2">
-                <Label id="topic-label" className="text-smoke">
-                    Topic
-                </Label>
-                <ToggleGroup
-                    type="single"
-                    aria-labelledby="topic-label"
-                    value={topic}
-                    // Radix clears on a second click; keep one chosen.
-                    onValueChange={(value) => value && setTopic(value)}
-                    className="flex-wrap gap-2"
-                >
-                    {TOPICS.map((t) => (
-                        <ToggleGroupItem
-                            key={t.value}
-                            value={t.value}
-                            className="border-line text-smoke hover:text-chalk data-[state=on]:bg-gtech-red h-11 rounded-none border px-4 first:rounded-none last:rounded-none hover:bg-white/5 data-[state=on]:border-transparent data-[state=on]:text-white"
-                        >
-                            {t.label}
-                        </ToggleGroupItem>
-                    ))}
-                </ToggleGroup>
-                <input type="hidden" name="topic" value={topic} />
-            </div>
-
             <TextField
-                name="vehicle"
-                label="Vehicle"
+                name="message"
+                label="Message"
                 optional
-                error={errors.vehicle}
+                error={errors.message}
             >
-                {(props) => (
-                    <Input {...props} placeholder="Make, model, year" />
-                )}
-            </TextField>
-            <TextField name="message" label="Message" error={errors.message}>
                 {(props) => (
                     <textarea
                         {...props}
-                        rows={5}
-                        required
+                        rows={3}
+                        placeholder="Your car, or what you need"
                         className={cn(
                             props.className,
                             'border px-3 py-2 text-base outline-none focus-visible:ring-[3px] md:text-sm',
@@ -313,7 +273,7 @@ function OfflineForm({
                 >
                     <span className="flex skew-x-12 items-center gap-2">
                         {submitting && <Spinner />}
-                        {submitting ? 'Sending' : 'Send message'} {/* DRAFT */}
+                        {submitting ? 'Sending' : 'Get in touch'} {/* DRAFT */}
                     </span>
                 </button>
                 {/* Privacy notice — owner decision. */}
