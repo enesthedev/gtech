@@ -12,7 +12,8 @@ void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
-            case name === 'welcome':
+            // The public site brings its own shell (layouts/home-layout).
+            case name === 'welcome' || name === 'dealers':
                 return null;
             case name.startsWith('auth/'):
                 return AuthLayout;
