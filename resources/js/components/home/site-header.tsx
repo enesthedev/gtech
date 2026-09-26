@@ -8,6 +8,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
+import { useSupportStatus } from '@/lib/support-hours';
 import { cn, toUrl } from '@/lib/utils';
 import { home, login } from '@/routes';
 import type { NavItem } from '@/types';
@@ -130,6 +131,7 @@ export function SiteHeader({ nav }: Props) {
                             );
                         })}
                     </nav>
+                    <SupportPill />
                     <LoginButton />
 
                     <Sheet>
@@ -181,6 +183,32 @@ export function SiteHeader({ nav }: Props) {
                 <div className="bg-gtech-red h-full" />
             </div>
         </header>
+    );
+}
+
+// Shown only while support is open, the file-service sites' pattern. Hidden on
+// the server too, so SSR never guesses the time.
+function SupportPill() {
+    const status = useSupportStatus();
+
+    if (!status?.open) {
+        return null;
+    }
+
+    return (
+        <a
+            href="/#contact"
+            className="border-line text-chalk hover:border-chalk inline-flex h-8 -skew-x-12 items-center border px-3 font-mono text-xs uppercase transition-colors"
+        >
+            <span className="flex skew-x-12 items-center gap-2">
+                <span aria-hidden="true" className="size-1.5 bg-green-400" />
+                Open
+                <span className="sr-only">
+                    {' '}
+                    — support is online, start a chat
+                </span>
+            </span>
+        </a>
     );
 }
 
